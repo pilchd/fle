@@ -1,0 +1,64 @@
+name: "npm"
+on:
+  push:
+    # Run only on branch pushes (not on tag pushes)
+    branches:
+      - "**"
+  release:
+    types: [published]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install latest Node.js
+        uses: actions/setup-node@v4
+      - name: Checkout ${{github.ref_name}}
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Test application
+        run: npm test
+
+  package:
+    runs-on: ubuntu-latest
+    outputs:
+      package: ${{steps.package.outputs.package}}
+    steps:
+      - name: Install latest Node.js
+        uses: actions/setup-node@v4
+      - name: Checkout ${{github.ref_name}}
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build application
+        run: npm run build
+      - name: Package application
+        id: package
+        run: echo package=$(npm pack) >> $GITHUB_OUTPUT
+      - name: Upload package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{steps.package.outputs.package}}
+          path: ${{steps.package.outputs.package}}
+
+  publish:
+    if: ${{github.event_name == 'release'}}
+    needs:
+      - test
+      - package
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - name: Install/configure latest Node.js
+        uses: actions/setup-node@v4
+        with:
+          registry-url: https://registry.npmjs.org
+      - name: Download package as artifact
+        uses: actions/download-artifact@v4
+      - name: Publish package
+        env:
+          ARTIFACT: ${{needs.package.outputs.package}}
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+        run: npm publish --access public file:$ARTIFACT/$ARTIFACT

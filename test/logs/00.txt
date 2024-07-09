@@ -1,0 +1,16 @@
+nickname Test Log 00
+mycall W1AW
+# Present as override in all QSOs
+qslmsg Test Global QSL Message
+
+# Test normal occurrences of each field
+date 2023-12-01 20m SSB 1234 W1AW/1 55 59 @Maxim #FN31 <Test QSL Message> {Test Comment}
+
+# Test field carry and phone RST inference
+W1AW/2
+
+# Test time and phone RST extension
+5 W1AW/3 7
+
+# Test time and CW RST extension
+CW 45 W1AW/4 35 7

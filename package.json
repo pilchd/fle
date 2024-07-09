@@ -1,0 +1,52 @@
+{
+    "name": "@pilchd/fle",
+    "version": "1.0.0-rc.1",
+    "description": "PEG parser for a superset of DF3CB's Fast Log Entry 3",
+    "keywords": [
+        "amateur radio",
+        "ham",
+        "ham radio",
+        "fle",
+        "fast",
+        "log",
+        "entry"
+    ],
+    "homepage": "https://github.com/pilchd/fle",
+    "bugs": "https://github.com/pilchd/fle/issues",
+    "license": "MIT",
+    "author": "Nic Pilcher <nic@pilchd.com> (https://pilchd.com/)",
+    "files": [
+        "./dist/**"
+    ],
+    "exports": {
+        "import": "./dist/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/pilchd/fle.git"
+    },
+    "scripts": {
+        "parser-generator": "peggy --allowed-start-rules FLE --format es -o dist/parser.js src/grammar/*.peggy",
+        "prebuild": "npm run parser-generator",
+        "build": "tsc",
+        "pretest": "npm run build",
+        "test": "mocha test/**/*.spec.ts",
+        "clean": "rm -rf dist/"
+    },
+    "devDependencies": {
+        "@types/chai": "latest",
+        "@types/mocha": "latest",
+        "@types/node": "latest",
+        "chai": "5.1",
+        "mocha": "10.6",
+        "peggy": "4.0",
+        "tsx": "4.16",
+        "typescript": "5.5"
+    },
+    "type": "module",
+    "mocha": {
+        "node-option": [
+            "import=tsx"
+        ]
+    }
+}
